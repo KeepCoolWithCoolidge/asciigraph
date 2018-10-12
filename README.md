@@ -1,4 +1,5 @@
-# asciigraph
+# asciigraph [![Linux Build Status (Travis)](https://img.shields.io/travis/KeepCoolWithCoolidge/asciigraph/master.svg?label=Linux%20/%20macOS "Linux/macOS build status (Travis)")](https://travis-ci.org/KeepCoolWithCoolidge/asciigraph)
+
 Console ascii line graphs in pure Nim ╭┈╯.
 
 ## Installation
