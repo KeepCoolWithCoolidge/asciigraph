@@ -1,7 +1,7 @@
 import math
 import strutils
 import sequtils
-import strfmt
+import strformat
 
 func linearInterpolate(before, after, atPoint: float64): float64 =
   before + (after - before) * atPoint
@@ -77,10 +77,17 @@ func plot*(series: openArray[float64], width: int = 0, height: int = 0, offset: 
       inc precision, int(abs(logMaximum) - 1.0)
   elif logMaximum > 2:
     precision = 0
-
+    
   var 
-    maxNumLength = len(maximum.format("0.$1f" % $precision))
-    minNumLength = len(minimum.format("0.$1f" % $precision))
+    specifier = "0.$1f" % $precision
+    maxString, minString: string
+    
+  maximum.format(specifier, maxString)
+  minimum.format(specifier, minString)
+  
+  let 
+    maxNumLength = len(maxString)
+    minNumLength = len(minString)
     maxWidth = max(maxNumLength, minNumLength)
 
   for y in intmin2..intmax2:
@@ -90,10 +97,11 @@ func plot*(series: openArray[float64], width: int = 0, height: int = 0, offset: 
     else:
       magnitude = float64(y)
   
-    var
-      label = magnitude.format("$1.$2f" % [$(maxWidth + 1), $precision])
-      w = y - intmin2
-      h = max(l_offset - len(label), 0)
+    specifier = "$1.$2f" % [$(maxWidth + 1), $precision]
+    var label: string
+    magnitude.format(specifier, label)
+    var w = y - intmin2
+    var h = max(l_offset - len(label), 0)
     
     plot[w][h] = label
     if y == 0:
