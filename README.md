@@ -1,5 +1,5 @@
 # asciigraph
-Console ascii line charts in pure Nim.
+Console ascii line graphs in pure Nim ╭┈╯.
 
 ## Installation
 
@@ -17,7 +17,7 @@ var data = @[3f64, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
 echo plot(data, caption="An example graph!")
 ```
 
-Running this example would render the following graph:
+Running this example renders the following graph:
 
 ```
  10.00 ┤        ╭╮     
