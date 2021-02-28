@@ -187,5 +187,5 @@ proc run() =
       check plot(set12, height=5, width=45) == string12
     test "set 13":
       check plot(set13, width=(-10), height=(-10), offset=(-1)) == string13
+
 run()
-  

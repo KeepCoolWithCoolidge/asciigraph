@@ -1,33 +1,29 @@
-import math
-import strutils
-import sequtils
-import strformat
+import std/[math, strutils, sequtils, strformat]
 
 func linearInterpolate(before, after, atPoint: float64): float64 =
   before + (after - before) * atPoint
 
 func interpolateArray(data: openArray[float64], fitCount: int): seq[float64] =
+  result = newSeqOfCap[float64](fitCount)
   var
     spring: float64
     before: float64
     after: float64
     atPoint: float64
-    interpolateData: seq[float64] = newSeq[float64](0)
     springFactor = float64(len(data) - 1) / float64(fitCount - 1)
   
-  interpolateData.add(data[0])
+  result.add(data[0])
 
   for i in 1..<fitCount - 1:
     spring = float64(i) * springFactor
     before = floor(spring)
     after = ceil(spring)
     atPoint = spring - before
-    interpolateData.add(linearInterpolate(data[int(before)], data[int(after)], atPoint))
+    result.add(linearInterpolate(data[int(before)], data[int(after)], atPoint))
   
-  interpolateData.add(data[data.high])
-  interpolateData
+  result.add(data[^1])
 
-func plot*(series: openArray[float64], width: int = 0, height: int = 0, offset: int = 3, caption: string = ""): string =
+func plot*(series: openArray[float64], width = 0, height = 0, offset = 3, caption = ""): string =
   var l_height, l_offset: int
   var interpolatedSeries: seq[float64]
   if width > 0:
@@ -82,8 +78,8 @@ func plot*(series: openArray[float64], width: int = 0, height: int = 0, offset: 
     specifier = "0.$1f" % $precision
     maxString, minString: string
     
-  maximum.format(specifier, maxString)
-  minimum.format(specifier, minString)
+  maxString.formatValue(maximum, specifier)
+  minString.formatValue(minimum, specifier)
   
   let 
     maxNumLength = len(maxString)
@@ -99,7 +95,7 @@ func plot*(series: openArray[float64], width: int = 0, height: int = 0, offset: 
   
     specifier = "$1.$2f" % [$(maxWidth + 1), $precision]
     var label: string
-    magnitude.format(specifier, label)
+    label.formatValue(magnitude, specifier)
     var w = y - intmin2
     var h = max(l_offset - len(label), 0)
     
@@ -132,18 +128,16 @@ func plot*(series: openArray[float64], width: int = 0, height: int = 0, offset: 
       for y in start..<`end`:
         plot[rows - y][x + l_offset] = "│"
 
-  var lines: string
   for h, horizontal in plot:
     if h != 0:
-      lines.add("\n")
+      result.add("\n")
     for _, v in horizontal:
-      lines.add(v)
+      result.add(v)
   
   if caption != "":
-    lines.add("\n")
-    lines.add(repeat(" ", l_offset + maxWidth + 2))
-    lines.add(caption)
-  lines
+    result.add("\n")
+    result.add(repeat(" ", l_offset + maxWidth + 2))
+    result.add(caption)
 
 when isMainModule:
   var data = @[3f64, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
