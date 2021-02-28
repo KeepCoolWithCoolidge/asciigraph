@@ -4,7 +4,7 @@ func linearInterpolate(before, after, atPoint: float64): float64 =
   before + (after - before) * atPoint
 
 func interpolateArray(data: openArray[float64], fitCount: int): seq[float64] =
-  result = newSeqOfCap[float64](fitCount)
+  result = newSeq[float64](fitCount)
   var
     spring: float64
     before: float64
@@ -12,16 +12,16 @@ func interpolateArray(data: openArray[float64], fitCount: int): seq[float64] =
     atPoint: float64
     springFactor = float64(len(data) - 1) / float64(fitCount - 1)
   
-  result.add(data[0])
+  result[0] = data[0]
 
   for i in 1..<fitCount - 1:
     spring = float64(i) * springFactor
     before = floor(spring)
     after = ceil(spring)
     atPoint = spring - before
-    result.add(linearInterpolate(data[int(before)], data[int(after)], atPoint))
+    result[i] = linearInterpolate(data[int(before)], data[int(after)], atPoint)
   
-  result.add(data[^1])
+  result[fitCount - 1] = data[^1]
 
 func plot*(series: openArray[float64], width = 0, height = 0, offset = 3, caption = ""): string =
   var l_height, l_offset: int
