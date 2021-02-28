@@ -4,7 +4,7 @@ func linearInterpolate(before, after, atPoint: float64): float64 =
   before + (after - before) * atPoint
 
 func interpolateArray(data: openArray[float64], fitCount: int): seq[float64] =
-  result = newSeq[float64](fitCount)
+  result.newSeq(fitCount)
   var
     spring: float64
     before: float64
