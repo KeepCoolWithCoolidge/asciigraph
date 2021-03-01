@@ -35,8 +35,9 @@ Running this example renders the following graph:
 
 ## Acknowledgements
 
-This package is a Nim port of the [asciichart](https://github.com/kroitor/asciichart) library written by @kroitor.
-Forked from https://github.com/KeepCoolWithCoolidge/asciigraph to update for latest Nim versions.
+This package is a Nim port of the [asciichart](https://github.com/kroitor/asciichart) library written by [@kroitor](https://github.com/kroitor).
+
+Forked from https://github.com/KeepCoolWithCoolidge/asciigraph to update for latest Nim versions (and some other improvements).
 
 ## Contributing
 
