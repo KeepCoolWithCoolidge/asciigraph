@@ -1,4 +1,4 @@
-# asciigraph [![Linux Build Status (Travis)](https://img.shields.io/travis/KeepCoolWithCoolidge/asciigraph/master.svg?label=Linux%20/%20macOS "Linux/macOS build status (Travis)")](https://travis-ci.org/KeepCoolWithCoolidge/asciigraph)
+# asciigraph ![BuildAndTest](https://github.com/Yardanico/asciigraph/actions/workflows/test.yml/badge.svg)
 
 Console ascii line graphs in pure Nim ╭┈╯.
 
@@ -35,7 +35,8 @@ Running this example renders the following graph:
 
 ## Acknowledgements
 
-This package is nim port of library [asciichart](https://github.com/kroitor/asciichart) written by [@kroitor](https://github.com/kroitor).
+This package is a Nim port of the [asciichart](https://github.com/kroitor/asciichart) library written by @kroitor.
+Forked from https://github.com/KeepCoolWithCoolidge/asciigraph to update for latest Nim versions.
 
 ## Contributing
 
