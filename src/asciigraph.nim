@@ -22,16 +22,16 @@ func interpolateArray[T: SomeFloat](data: openArray[T], fitCount: int): seq[T] =
 
 func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
     offset = 3, caption = ""): string =
+  
   var l_height, l_offset: int
-  var interpolatedSeries: seq[T]
-  if width > 0:
-    interpolatedSeries = interpolateArray(series, width)
-  else:
-    interpolatedSeries = interpolateArray(series, len(series))
+
+  let interpSeries = interpolateArray(
+    series, if width > 0: width else: len(series)
+  )
 
   var
-    minimum = min(interpolatedSeries)
-    maximum = max(interpolatedSeries)
+    minimum = min(interpSeries)
+    maximum = max(interpSeries)
     interval = abs(maximum - minimum)
 
   if height <= 0:
@@ -53,7 +53,7 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
     intmax2 = int(max2)
 
     rows = abs(intmax2 - intmin2)
-    width = len(interpolatedSeries) + l_offset
+    width = len(interpSeries) + l_offset
     plot = newSeqWith(rows + 1, newSeq[string](width))
 
   for i in 0..rows:
@@ -72,12 +72,9 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
   elif logMaximum > 2:
     precision = 0
 
-  var
-    specifier = "0.$1f" % $precision
-    maxString, minString: string
-
-  maxString.formatValue(maximum, specifier)
-  minString.formatValue(minimum, specifier)
+  let
+    maxString = maximum.formatFloat(ffDecimal, precision)
+    minString = minimum.formatFloat(ffDecimal, precision)
 
   let
     maxNumLength = len(maxString)
@@ -91,26 +88,23 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
     else:
       magnitude = T(y)
 
-    specifier = "$1.$2f" % [$(maxWidth + 1), $precision]
-    var label: string
-    label.formatValue(magnitude, specifier)
+    # Format the float value with right-align
+    let label = magnitude.formatFloat(
+      ffDecimal, precision).alignString(maxWidth + 1, '>')
     var w = y - intmin2
     var h = max(l_offset - len(label), 0)
 
     plot[w][h] = label
-    if y == 0:
-      plot[w][l_offset - 1] = "┼"
-    else:
-      plot[w][l_offset - 1] = "┤"
+    plot[w][l_offset - 1] = if y == 0: "┼" else: "┤"
 
-  var y0 = int(round(interpolatedSeries[0] * ratio) - min2)
+  var y0 = int(round(interpSeries[0] * ratio) - min2)
   var y1: int
 
   plot[rows - y0][l_offset - 1] = "┼"
 
-  for x in 0..<interpolatedSeries.high:
-    y0 = int(round(interpolatedSeries[x + 0] * ratio) - T(intmin2))
-    y1 = int(round(interpolatedSeries[x + 1] * ratio) - T(intmin2))
+  for x in 0..<interpSeries.high:
+    y0 = int(round(interpSeries[x + 0] * ratio) - T(intmin2))
+    y1 = int(round(interpSeries[x + 1] * ratio) - T(intmin2))
     if y0 == y1:
       plot[rows - y0][x + l_offset] = "─"
     else:
@@ -132,6 +126,14 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
     result.add("\n")
     result.add(repeat(" ", l_offset + maxWidth + 2))
     result.add(caption)
+
+func plot*[T: SomeInteger](series: openArray[T], width = 0, height = 0,
+    offset = 3, caption = ""): string =
+  var data = newSeq[float](series.len)
+  for i, val in series:
+    data[i] = float(val)
+  
+  result = plot(data, width, height, offset, caption)
 
 when isMainModule:
   var data = @[3f32, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]

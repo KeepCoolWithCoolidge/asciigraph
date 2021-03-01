@@ -14,7 +14,7 @@ nimble install asciigraph
 ```nim
 import asciigraph
 
-var data = @[3f64, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
+var data = @[3, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
 echo plot(data, caption="An example graph!")
 ```
 
