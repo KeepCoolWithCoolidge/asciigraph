@@ -1,4 +1,4 @@
-import std/[math, strutils, sequtils, strformat]
+import std/[math, strutils, sequtils]
 
 func linearInterpolate(before, after, atPoint: SomeFloat): SomeFloat =
   before + (after - before) * atPoint
@@ -11,7 +11,7 @@ func interpolateArray[T: SomeFloat](data: openArray[T], fitCount: int): seq[T] =
 
   result[0] = data[0]
 
-  for i in 1..<fitCount - 1:
+  for i in 1 ..< fitCount - 1:
     spring = T(i) * springFactor
     before = floor(spring)
     after = ceil(spring)
@@ -22,7 +22,20 @@ func interpolateArray[T: SomeFloat](data: openArray[T], fitCount: int): seq[T] =
 
 func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
     offset = 3, caption = ""): string =
-  
+  ## Plots the data series `series` and returns a `string` containing the graph
+  ## 
+  ## Possible arguments:
+  ## - `width` - interpolates data to the provided width. By default uses
+  ##   number of elements in `series`.
+  ## - `height` - rescales graph to the desired height + 1 (in lines).
+  ## - `offset` - Axis offset from the left. 3 is the minimal value allowed.
+  ## - `caption` - Caption at the bottom of the graph.
+  ## 
+  ## **Example**:
+  ## 
+  ## .. code-block:: Nim
+  ##   let data = @[3.0, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
+  ##   echo plot(data, caption = "An example graph!")
   var l_height, l_offset: int
 
   let interpSeries = interpolateArray(
@@ -30,6 +43,8 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
   )
 
   var
+    # Find min and max values in the data so we can figure out
+    # the amount of rows to draw
     minimum = min(interpSeries)
     maximum = max(interpSeries)
     interval = abs(maximum - minimum)
@@ -89,8 +104,7 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
       magnitude = T(y)
 
     # Format the float value with right-align
-    let label = magnitude.formatFloat(
-      ffDecimal, precision).alignString(maxWidth + 1, '>')
+    let label = magnitude.formatFloat(ffDecimal, precision).align(maxWidth + 1)
     var w = y - intmin2
     var h = max(l_offset - len(label), 0)
 
@@ -124,11 +138,12 @@ func plot*[T: SomeFloat](series: openArray[T], width = 0, height = 0,
 
   if caption != "":
     result.add("\n")
-    result.add(repeat(" ", l_offset + maxWidth + 2))
+    result.add(repeat(' ', l_offset + maxWidth + 2))
     result.add(caption)
 
 func plot*[T: SomeInteger](series: openArray[T], width = 0, height = 0,
     offset = 3, caption = ""): string =
+  ## Overload of `plot` for integers.
   var data = newSeq[float](series.len)
   for i, val in series:
     data[i] = float(val)
@@ -136,5 +151,5 @@ func plot*[T: SomeInteger](series: openArray[T], width = 0, height = 0,
   result = plot(data, width, height, offset, caption)
 
 when isMainModule:
-  var data = @[3f32, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
-  echo plot(data, caption = "An example graph!")
+  var data = @[3, 4, 9, 6, 2, 4, 5, 8, 5, 10, 2, 7, 2, 5, 6]
+  echo plot(data, caption = "An example graph!", height = 1)
